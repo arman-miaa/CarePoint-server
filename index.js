@@ -45,6 +45,12 @@ async function run() {
       res.send(result);
     });
 
+    // get all post
+    app.get('/allPost', async (req, res) => {
+      const result = await volunteerCollection.find().toArray();
+      res.send(result);
+    })
+
 
     // get data by dynamic id
     app.get("/volunteerPosts/:id", async (req, res) => {
