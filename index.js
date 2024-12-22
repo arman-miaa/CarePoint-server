@@ -37,6 +37,12 @@ async function run() {
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
 
+    // get api
+    app.get("/volunteerPosts", async (req, res) => {
+      const result = await volunteerCollection.find().toArray()
+      res.send(result);
+    });
+
 
     app.post('/volunteerPosts', async (req, res) => {
       const newVolunteerPost = req.body;
