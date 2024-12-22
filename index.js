@@ -67,8 +67,19 @@ async function run() {
     
     app.post("/volunteerRequests", async (req, res) => {
       const newRequest = req.body;
+      const { postId } = newRequest;
+      // console.log(postId);
       const result = await RequestCollection.insertOne(newRequest);
-      res.send(result);
+      // console.log("Query for update:", { _id: new ObjectId(postId) });
+
+      const updateRequest = await volunteerCollection.updateOne({_id: new ObjectId(postId)},{$inc:{volunteers: -1}})
+
+      res.send({
+        message: "Request created and volunteers count updated",
+        insertResult: result,
+        updateResult: updateRequest,
+      });
+
     });
 
 
