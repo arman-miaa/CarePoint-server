@@ -39,7 +39,7 @@ async function run() {
 
     // get api
     app.get("/volunteerPosts", async (req, res) => {
-      const result = await volunteerCollection.find().toArray()
+      const result = await volunteerCollection.find().limit(6).sort({postDeadline: 1}).toArray()
       res.send(result);
     });
 
