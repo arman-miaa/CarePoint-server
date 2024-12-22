@@ -47,7 +47,9 @@ async function run() {
 
     // get all post
     app.get('/allPost', async (req, res) => {
-      const result = await volunteerCollection.find().toArray();
+      const search = req.query.search || '';
+      console.log(search);
+      const result = await volunteerCollection.find({title:{$regex: search, $options: 'i'}}).toArray();
       res.send(result);
     })
 
