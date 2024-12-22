@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+
 require('dotenv').config()
 const app = express();
 const port = process.env.PORT || 5000;
@@ -40,6 +41,16 @@ async function run() {
     // get api
     app.get("/volunteerPosts", async (req, res) => {
       const result = await volunteerCollection.find().limit(6).sort({postDeadline: 1}).toArray()
+      res.send(result);
+    });
+
+
+    // get data by dynamic id
+    app.get("/volunteerPosts/:id", async (req, res) => {
+      const id = req.params.id;
+      // console.log(id);
+      const query = { _id: new ObjectId(id) };
+      const result = await volunteerCollection.findOne(query);
       res.send(result);
     });
 
