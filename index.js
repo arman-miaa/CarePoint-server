@@ -31,6 +31,7 @@ async function run() {
     await client.connect();
 
     const volunteerCollection = client.db('volunteerDB').collection('volunteer_posts');
+    const RequestCollection = client.db('volunteerDB').collection('volunteerRequests');
 
     
     // Send a ping to confirm a successful connection
@@ -62,7 +63,13 @@ async function run() {
     })
 
 
-
+    // for request collection APIs
+    
+    app.post("/volunteerRequests", async (req, res) => {
+      const newRequest = req.body;
+      const result = await RequestCollection.insertOne(newRequest);
+      res.send(result);
+    });
 
 
   } finally {
