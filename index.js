@@ -38,6 +38,11 @@ async function run() {
 
 
 
+    app.post('/volunteerPosts', async (req, res) => {
+      const newVolunteerPost = req.body;
+      const result = await volunteerCollection.insertOne(newVolunteerPost)
+      res.send(result);
+    })
 
 
 
