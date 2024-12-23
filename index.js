@@ -81,6 +81,15 @@ async function run() {
       res.send(result);
     })
 
+    // get request post to be a volunteer
+    app.get('/myRequestPost/:email', async (req, res) => {
+      const email = req.params.email;
+      console.log(email);
+      const query = { organizerEmail: email };
+      const result = await RequestCollection.find(query).toArray();
+      res.send(result);
+    })
+
 
     app.post('/volunteerPosts', async (req, res) => {
       const newVolunteerPost = req.body;
@@ -119,6 +128,14 @@ async function run() {
       const result = await volunteerCollection.updateOne({ _id: new ObjectId(id) }, { $set: updateData });
       res.send(result);
 
+    })
+
+    // delete post by id
+    app.delete('/deletePost/:id', async(req, res) => {
+      const id = req.params.id;
+      
+      const result = await volunteerCollection.deleteOne({ _id: new ObjectId(id) });
+      res.send(result);
     })
 
 
