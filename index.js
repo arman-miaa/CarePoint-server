@@ -138,6 +138,14 @@ async function run() {
       res.send(result);
     })
 
+    // delete post by id for request 
+    app.delete('/deleteRequest/:id', async(req, res) => {
+      const id = req.params.id;
+      
+      const result = await RequestCollection.deleteOne({ _id: new ObjectId(id) });
+      res.send(result);
+    })
+
 
   } finally {
     // Ensures that the client will close when you finish/error
