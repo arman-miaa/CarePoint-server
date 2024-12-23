@@ -109,6 +109,19 @@ async function run() {
     });
 
 
+    // update api
+
+    app.patch('/updatePost/:id', async (req, res) => {
+
+      const id = req.params.id;
+      const updateData = req.body;
+
+      const result = await volunteerCollection.updateOne({ _id: new ObjectId(id) }, { $set: updateData });
+      res.send(result);
+
+    })
+
+
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
