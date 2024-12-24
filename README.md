@@ -1,18 +1,42 @@
-# 🌟 GameScope Server: Backend API for Game Review Management
+# 🌟 CarePoint: Backend API for Management CarePoint Application
 
-This repository contains the server-side implementation for **GameScope**, the ultimate game review application. The server handles data storage, CRUD operations, and API endpoints for managing game reviews, and watchlists.
+CarePoint is a volunteer management platform designed to streamline appointment booking, manage user profiles, and provide essential volunteer services. This repository contains the backend API implementation for CarePoint, enabling smooth and secure data handling.
+
+---
+
+## 🛠 Purpose
+
+The purpose of this project is to provide a comprehensive solution for managing volunteer services, appointments, and user profiles. CarePoint ensures a user-friendly and efficient way to access volunteer services.
+
+---
+
+## 🌐 Live URL
+
+- 🌍 **Live Link**: 👉 [https://ph-assignment-11-server-brown.vercel.app/](https://ph-assignment-11-server-brown.vercel.app/)
 
 ---
 
 ## 🚀 Key Features
-- 🌐 **RESTful API**: Provides endpoints for `GET`, `POST`, `PUT`, and `DELETE` requests.
-- 📊 **Sorting & Pagination**: Easily sort and limit data with query parameters.
-- 🔒 **Secure Routes**: Protected routes ensure only authenticated users can access critical endpoints.
-- 🔍 **Dynamic Filtering**: Filter game reviews by genre, year, or rating.
-- ⚡ **Fast and Scalable**: Built with modern backend practices for smooth performance.
+
+- 🌐 **RESTful API**: Offers `GET`, `POST`, `PUT`, and `DELETE` endpoints for various resources.
+- 🔒 **JWT Token Authentication**: Secure login and protected routes for authorized users.
+- 📊 **Sorting & Pagination**: Easily fetch data with sorting and pagination.
+- 🔍 **Dynamic Filtering**: Filter appointments or services by parameters like date, status, or specialization.
+- 🛡️ **Role-Based Access Control**: Differentiated permissions for logged-in users and general users.
+- ⚡ **CRUD Operations**: Seamless management of appointments, user data, and services.
 
 ---
 
-## 🌐 Live Links
+## 📦 NPM Packages Used
 
-- 🌍 **Vercel Live Link**: 👉 [https://ph-assignment10-server-lilac.vercel.app/](https://ph-assignment10-server-lilac.vercel.app/)
+- **Express**: Framework for building server-side applications.
+- **MongoDB**: NoSQL database for data storage.
+
+- **JWT (jsonwebtoken)**: Handles token-based authentication.
+- **Cookie-Parser**: Parses cookies for managing user sessions.
+- **Dotenv**: Manages environment variables securely.
+- **Cors**: Enables cross-origin requests.
+- **Nodemon**: Helps with server auto-restarts during development.
+
+---
+
