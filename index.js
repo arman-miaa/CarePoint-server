@@ -1,5 +1,8 @@
 const express = require('express');
 const cors = require('cors');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 
 require('dotenv').config()
 const app = express();
@@ -8,17 +11,40 @@ const port = process.env.PORT || 5000;
 //* middleware
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://carepoint36.netlify.app"],
+    origin: [
+      "http://localhost:5173",
+      "https://carepoint36.netlify.app",
+      "https://carepoint-b2a32.web.app",
+      "https://carepoint-b2a32.firebaseapp.com",
+    ],
     credentials: true,
   })
 );
 
 // app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
+
+// middleware for checking token
+const verifyToken = (req, res, next) => {
+  
+  const token = req.cookies?.token;
+  // console.log('token inside the verifyToken', token);
+  if (!token) {
+    return res.status(401).send({ message: 'Unauthorized access' });
+  }
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).send({ message: 'Unauthorized access' });
+    }
+    req.user = decoded;
+    next();
+  })
+}
 
 
 
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+
 // const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.swu9d.mongodb.net/?retryWrites=true&w=majority`;
 const uri =
   `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.7argw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -46,6 +72,25 @@ async function run() {
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
 
+    // auth related apis for jwt
+    
+    app.post('/jwt', (req, res) => {
+      const user = req.body;
+      console.log(user);
+      const token = jwt.sign(user, process.env.JWT_SECRET, {
+        expiresIn:'5h'
+      });
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      })
+      .send({success: true})
+    })
+
+
+
+
     // get api
     app.get("/volunteerPosts", async (req, res) => {
       const result = await volunteerCollection.find().limit(6).sort({postDeadline: 1}).toArray()
@@ -53,7 +98,7 @@ async function run() {
     });
 
     // get all post
-    app.get('/allPost', async (req, res) => {
+    app.get('/allPost',  async (req, res) => {
       const search = req.query.search || '';
       console.log(search);
       const result = await volunteerCollection.find({title:{$regex: search, $options: 'i'}}).toArray();
@@ -73,21 +118,44 @@ async function run() {
 
     // get my post
 
-    app.get('/myPost/:email', async (req, res) => {
-      const email = req.params.email;
-      console.log(email);
-      const query = { organizerEmail: email };
-      const result = await volunteerCollection.find(query).toArray();
-      res.send(result);
-    })
+app.get("/myPost/:email", verifyToken, async (req, res) => {
+  const email = req.params.email;
+  // console.log("Email from params:", email);
+  // console.log("Token from cookies:", req.cookies?.token);
+  // console.log("Decoded user:", req.user);
+  if (req.user.email !== email) {
+    return res.status(403).send({ message: "Forbidden access" });
+  }
+  const query = { organizerEmail: email };
+  const result = await volunteerCollection.find(query).toArray();
+  res.send(result);
+});
+
 
     // get request post to be a volunteer
-    app.get('/myRequestPost/:email', async (req, res) => {
+    app.get('/myRequestPost/:email', verifyToken, async (req, res) => {
       const email = req.params.email;
-      console.log(email);
+      console.log("Email from params:", email);
+      console.log("Token from cookies:", req.cookies?.token);
+      console.log("Decoded user:", req.user);
+      if (req.user.email !== email) {
+        return res.status(403).send({ message: "Forbidden access" });
+      }
       const query = { organizerEmail: email };
       const result = await RequestCollection.find(query).toArray();
       res.send(result);
+    })
+
+    // remove token from cookie if logged out user
+    app.post('/logout', (req, res) => {
+      res
+        .clearCookie("token", {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite:
+          process.env.NODE_ENV === "production" ? "none" : "strict",
+        })
+      .send({success: true})
     })
 
 
