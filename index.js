@@ -31,15 +31,16 @@ const verifyToken = (req, res, next) => {
   const token = req.cookies?.token;
   // console.log('token inside the verifyToken', token);
   if (!token) {
-    return res.status(401).send({ message: 'Unauthorized access' });
+    return res.status(401).send({ message: 'Unauthorized access1' });
   }
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
-      return res.status(401).send({ message: 'Unauthorized access' });
+      return res.status(401).send({ message: 'Unauthorized access2' });
     }
     req.user = decoded;
     next();
   })
+  
 }
 
 
@@ -107,9 +108,9 @@ async function run() {
 
 
     // get data by dynamic id
-    app.get("/volunteerPosts/:id", async (req, res) => {
+    app.get("/volunteerPosts/:id", verifyToken, async (req, res) => {
       const id = req.params.id;
-      // console.log(id);
+      console.log(id);
       const query = { _id: new ObjectId(id) };
       const result = await volunteerCollection.findOne(query);
       res.send(result);
@@ -159,8 +160,9 @@ app.get("/myPost/:email", verifyToken, async (req, res) => {
     })
 
 
-    app.post('/volunteerPosts', async (req, res) => {
+    app.post('/volunteerPosts',verifyToken,  async (req, res) => {
       const newVolunteerPost = req.body;
+      // console.log(newVolunteerPost);
       const result = await volunteerCollection.insertOne(newVolunteerPost)
       res.send(result);
     })
@@ -168,30 +170,37 @@ app.get("/myPost/:email", verifyToken, async (req, res) => {
 
     // for request collection APIs
     
-    app.post("/volunteerRequests", async (req, res) => {
+    app.post("/volunteerRequests", verifyToken, async (req, res) => {
       const newRequest = req.body;
       const { postId } = newRequest;
       // console.log(postId);
       const result = await RequestCollection.insertOne(newRequest);
       // console.log("Query for update:", { _id: new ObjectId(postId) });
 
-      const updateRequest = await volunteerCollection.updateOne({_id: new ObjectId(postId)},{$inc:{volunteers: -1}})
+      const updateRequest = await volunteerCollection.updateOne(
+        { _id: new ObjectId(postId) },
+        { $inc: { volunteers: -1 } }
+      );
 
       res.send({
         message: "Request created and volunteers count updated",
         insertResult: result,
         updateResult: updateRequest,
       });
-
     });
 
 
     // update api
 
-    app.patch('/updatePost/:id', async (req, res) => {
+    app.patch('/updatePost/:id', verifyToken, async (req, res) => {
 
       const id = req.params.id;
       const updateData = req.body;
+         const email = req.user.email;
+         console.log('post update',email);
+         if (req.user.email !== email) {
+           return res.status(403).send({ message: "Forbidden access" });
+         }
 
       const result = await volunteerCollection.updateOne({ _id: new ObjectId(id) }, { $set: updateData });
       res.send(result);
@@ -199,16 +208,29 @@ app.get("/myPost/:email", verifyToken, async (req, res) => {
     })
 
     // delete post by id
-    app.delete('/deletePost/:id', async(req, res) => {
+    app.delete('/deletePost/:id', verifyToken, async(req, res) => {
       const id = req.params.id;
+      const email = req.user.email;
+      // console.log('post delete',email);
+       if (req.user.email !== email) {
+         return res.status(403).send({ message: "Forbidden access" });
+       }
       
       const result = await volunteerCollection.deleteOne({ _id: new ObjectId(id) });
       res.send(result);
     })
 
+
     // delete post by id for request 
-    app.delete('/deleteRequest/:id', async(req, res) => {
+    app.delete('/deleteRequest/:id', verifyToken, async(req, res) => {
       const id = req.params.id;
+      // const email = req.user.email;
+      console.log("post delete request", email);
+
+       if (req.user.email !== email) {
+         return res.status(403).send({ message: "Forbidden access" });
+       }
+     
       
       const result = await RequestCollection.deleteOne({ _id: new ObjectId(id) });
       res.send(result);
