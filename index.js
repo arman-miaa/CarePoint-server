@@ -31,11 +31,11 @@ const verifyToken = (req, res, next) => {
   const token = req.cookies?.token;
   // console.log('token inside the verifyToken', token);
   if (!token) {
-    return res.status(401).send({ message: 'Unauthorized access1' });
+    return res.status(401).send({ message: 'Unauthorized Access' });
   }
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
-      return res.status(401).send({ message: 'Unauthorized access2' });
+      return res.status(401).send({ message: 'Unauthorized access' });
     }
     req.user = decoded;
     next();
@@ -219,12 +219,15 @@ app.get("/myPost/:email", verifyToken, async (req, res) => {
       const result = await volunteerCollection.deleteOne({ _id: new ObjectId(id) });
       res.send(result);
     })
+app.get("/checkToken", verifyToken, (req, res) => {
+  res.status(200).send({ message: "Token is valid" });
+});
 
 
     // delete post by id for request 
     app.delete('/deleteRequest/:id', verifyToken, async(req, res) => {
       const id = req.params.id;
-      // const email = req.user.email;
+      const email = req.user.email;
       console.log("post delete request", email);
 
        if (req.user.email !== email) {
