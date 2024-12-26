@@ -62,15 +62,15 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const volunteerCollection = client.db('volunteerDB').collection('volunteer_posts');
     const RequestCollection = client.db('volunteerDB').collection('volunteerRequests');
 
     
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    // await client.db("admin").command({ ping: 1 });
+    // console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
 
     // auth related apis for jwt
@@ -142,7 +142,7 @@ app.get("/myPost/:email", verifyToken, async (req, res) => {
       if (req.user.email !== email) {
         return res.status(403).send({ message: "Forbidden access" });
       }
-      const query = { organizerEmail: email };
+      const query = { volunteerEmail: email };
       const result = await RequestCollection.find(query).toArray();
       res.send(result);
     })
