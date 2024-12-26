@@ -20,8 +20,8 @@ The purpose of this project is to provide a comprehensive solution for managing 
 
 - 🌐 **RESTful API**: Offers `GET`, `POST`, `PUT`, and `DELETE` endpoints for various resources.
 - 🔒 **JWT Token Authentication**: Secure login and protected routes for authorized users.
-- 📊 **Sorting & Pagination**: Easily fetch data with sorting and pagination.
-- 🔍 **Dynamic Filtering**: Filter appointments or services by parameters like date, status, or specialization.
+- 📊 **Sorting**: Easily fetch data with sorting .
+
 - 🛡️ **Role-Based Access Control**: Differentiated permissions for logged-in users and general users.
 - ⚡ **CRUD Operations**: Seamless management of appointments, user data, and services.
 

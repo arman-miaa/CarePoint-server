@@ -77,7 +77,7 @@ async function run() {
     
     app.post('/jwt', (req, res) => {
       const user = req.body;
-      console.log(user);
+     
       const token = jwt.sign(user, process.env.JWT_SECRET, {
         expiresIn:'5h'
       });
@@ -101,7 +101,7 @@ async function run() {
     // get all post
     app.get('/allPost',  async (req, res) => {
       const search = req.query.search || '';
-      console.log(search);
+    
       const result = await volunteerCollection.find({title:{$regex: search, $options: 'i'}}).toArray();
       res.send(result);
     })
@@ -110,7 +110,7 @@ async function run() {
     // get data by dynamic id
     app.get("/volunteerPosts/:id", verifyToken, async (req, res) => {
       const id = req.params.id;
-      console.log(id);
+     
       const query = { _id: new ObjectId(id) };
       const result = await volunteerCollection.findOne(query);
       res.send(result);
@@ -136,9 +136,9 @@ app.get("/myPost/:email", verifyToken, async (req, res) => {
     // get request post to be a volunteer
     app.get('/myRequestPost/:email', verifyToken, async (req, res) => {
       const email = req.params.email;
-      console.log("Email from params:", email);
-      console.log("Token from cookies:", req.cookies?.token);
-      console.log("Decoded user:", req.user);
+      // console.log("Email from params:", email);
+      // console.log("Token from cookies:", req.cookies?.token);
+      // console.log("Decoded user:", req.user);
       if (req.user.email !== email) {
         return res.status(403).send({ message: "Forbidden access" });
       }
@@ -197,7 +197,7 @@ app.get("/myPost/:email", verifyToken, async (req, res) => {
       const id = req.params.id;
       const updateData = req.body;
          const email = req.user.email;
-         console.log('post update',email);
+        //  console.log('post update',email);
          if (req.user.email !== email) {
            return res.status(403).send({ message: "Forbidden access" });
          }
@@ -228,7 +228,7 @@ app.get("/checkToken", verifyToken, (req, res) => {
     app.delete('/deleteRequest/:id', verifyToken, async(req, res) => {
       const id = req.params.id;
       const email = req.user.email;
-      console.log("post delete request", email);
+      // console.log("post delete request", email);
 
        if (req.user.email !== email) {
          return res.status(403).send({ message: "Forbidden access" });
