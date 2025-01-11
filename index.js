@@ -226,19 +226,81 @@ async function run() {
     });
 
     // delete post by id for request
-    app.delete('/deleteRequest/:id', verifyToken, async(req, res) => {
-      const id = req.params.id;
-      const email = req.user.email;
-      // console.log("post delete request", email);
-      // const { postId } = req.body;
+    // app.delete('/deleteRequest/:id', verifyToken, async(req, res) => {
+    //   const id = req.params.id;
+    //   const email = req.user.email;
+    //   const { postId } = req.body;
+      
+    //   // console.log("post delete request", email);
+    //   // const { postId } = req.body;
 
-       if (req.user.email !== email) {
-         return res.status(403).send({ message: "Forbidden access" });
+    //    if (req.user.email !== email) {
+    //      return res.status(403).send({ message: "Forbidden access" });
+    //   }
+
+    //   const result = await RequestCollection.deleteOne({ _id: new ObjectId(id) });
+    //     const updateRequest = await volunteerCollection.updateOne(
+    //       { _id: new ObjectId(postId) },
+    //       { $inc: { volunteers: 1 } }
+    //     );
+    //   res.send({result,updateRequest});
+    // })
+
+    app.delete("/deleteRequest/:id", verifyToken, async (req, res) => {
+      try {
+        const id = req.params.id;
+        const email = req.user.email;
+       
+        
+        const request = await RequestCollection.findOne({
+          _id: new ObjectId(id),
+        });
+        const { postId } = request; 
+        console.log('id', id, email,postId);
+
+
+        // Check if postId exists
+        if (!postId) {
+          return res.status(400).send({ message: "Post ID is required" });
+        }
+
+        // Check if the email in the request body matches the email of the logged-in user
+        if (req.user.email !== email) {
+          return res
+            .status(403)
+            .send({
+              message: "Forbidden access: You cannot perform this action",
+            });
+        }
+
+        // Deleting the request from the collection
+        const result = await RequestCollection.deleteOne({
+          _id: new ObjectId(id),
+        });
+
+        // If no request was deleted, return an error
+        if (result.deletedCount === 0) {
+          return res.status(404).send({ message: "Request not found" });
+        }
+
+        // Update the volunteer collection to increment the number of volunteers
+        const updateRequest = await volunteerCollection.updateOne(
+          { _id: new ObjectId(postId) },
+          { $inc: { volunteers: 1 } }
+        );
+
+        // If the update operation didn't affect any document, return an error
+        if (updateRequest.matchedCount === 0) {
+          return res.status(404).send({ message: "Post not found for update" });
+        }
+
+        res.send({ result, updateRequest });
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: "Internal server error" });
       }
+    });
 
-      const result = await RequestCollection.deleteOne({ _id: new ObjectId(id) });
-      res.send(result);
-    })
 
   
 
