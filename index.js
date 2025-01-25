@@ -256,7 +256,7 @@ async function run() {
           _id: new ObjectId(id),
         });
         const { postId } = request; 
-        console.log('id', id, email,postId);
+        // console.log('id', id, email,postId);
 
 
         // Check if postId exists
@@ -296,7 +296,7 @@ async function run() {
 
         res.send({ result, updateRequest });
       } catch (error) {
-        console.error(error);
+        // console.error(error);
         res.status(500).send({ message: "Internal server error" });
       }
     });
@@ -306,7 +306,7 @@ async function run() {
 
 
   } finally {
-    // Ensures that the client will close when you finish/error
+    // Ensures that the client will close when you finish/error /
     // await client.close();
   }
 }

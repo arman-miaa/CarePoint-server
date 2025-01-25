@@ -12,7 +12,7 @@ The purpose of this project is to provide a comprehensive solution for managing 
 
 ## 🌐 Live URL
 
-- 🌍 **Live Link**: 👉 [https://ph-assignment-11-server-brown.vercel.app/](https://ph-assignment-11-server-brown.vercel.app/)
+- 🌍 **Live Link**: 👉 [https://carepoint-server.vercel.app/](https://carepoint-server.vercel.app/)
 
 ---
 
